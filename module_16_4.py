@@ -11,11 +11,11 @@ class User(BaseModel):
     username: str
     age: int
 
-@app.get("/users")
+@app.get("/users", response_model=List[User])
 async def get_all_users() -> List[User]:
     return users
 
-@app.post("/user/{username}/{age}")
+@app.post("/user/{username}/{age}", response_model=User)
 async def create_user(
         username: Annotated[str, Path(min_length=3, max_length=15, description='Enter username', example='UrbanUser')],
         age: Annotated[int, Path(ge=14, le=100, description='Enter age', example='18')]) -> User:
@@ -25,9 +25,9 @@ async def create_user(
     return user
 
 
-@app.put("/user/{user_id}/{username}/{age}")
+@app.put("/user/{user_id}/{username}/{age}", response_model=User)
 async def update_user(
-        user_id: Annotated[str, Path(min_length=1, max_length=15, description='Enter user_id', example='1')],
+        user_id: Annotated[int, Path(min_length=1, max_length=15, description='Enter user_id', example='1')],
         username: Annotated[str, Path(min_length=3, max_length=15, description='Enter username', example='UrbanUser')],
         age: Annotated[int, Path(ge=14, le=100, description='Enter age', example='18')]) -> str:
     for i in users:
@@ -38,9 +38,9 @@ async def update_user(
     raise HTTPException(status_code=404, detail='User was not found')
 
 
-@app.delete("/user/{user_id}")
+@app.delete("/user/{user_id}, response_model=User")
 async def delete_user(
-        user_id: Annotated[str, Path(min_length=1, max_length=15, description='Enter user_id', example='1')]) -> str:
+        user_id: Annotated[int, Path(min_length=1, max_length=15, description='Enter user_id', example='1')]) -> str:
     for k, i in enumerate(users):
         if i.id == user_id:
             return users.pop(k)
